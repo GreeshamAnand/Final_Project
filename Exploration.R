@@ -5,6 +5,7 @@ library(plyr)
 library(readr)
 
 train <- read.csv("train.csv")
+test <- read.csv("test.csv")
 
 train$season  <- factor(train$season, labels = c("Winter", "Spring", "Summer", "Fall"))
 train$weather <- factor(train$weather, labels = c("Good", "Normal", "Bad", "Very Bad"))
@@ -12,6 +13,11 @@ train$hour <- format(as.POSIXct(strptime(train$datetime,"%m/%d/%Y %H:%M",tz=""))
 train$dates <- format(as.POSIXct(strptime(train$datetime,"%m/%d/%Y %H:%M",tz="")) ,format = "%d/%m/%Y")
 train$Weekday <- weekdays(as.Date(train$dates))
 
+test$season  <- factor(test$season, labels = c("Winter", "Spring", "Summer", "Fall"))
+test$weather <- factor(test$weather, labels = c("Good", "Normal", "Bad", "Very Bad"))
+test$hour <- format(as.POSIXct(strptime(test$datetime,"%m/%d/%Y %H:%M",tz="")) ,format = "%H:%M")
+test$dates <- format(as.POSIXct(strptime(test$datetime,"%m/%d/%Y %H:%M",tz="")) ,format = "%d/%m/%Y")
+test$Weekday <- weekdays(as.Date(test$dates))
 
 
 season_summary <- ddply(train,.(season,hour),summarise, count = mean(counting))
