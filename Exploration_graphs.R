@@ -8,14 +8,14 @@ train <- read.csv("train.csv")
 test <- read.csv("test.csv")
 
 
-train$season  <- factor(train$season, labels = c("Spring", "Summer", "Fall", "Winter"))
+train$season  <- factor(train$season, labels = c("Winter", "Spring", "Summer", "Fall"))
 train$weather <- factor(train$weather, labels = c("Good", "Normal", "Bad", "Very Bad"))
 train$hour    <- factor(hour(ymd_hms(train$datetime)))
 train$times   <- as.POSIXct(strftime(ymd_hms(train$datetime), format="%H:%M:%S"), format="%H:%M:%S")
 train$Weekday <- wday(ymd_hms(train$datetime), label=TRUE)
 
 
-test$season  <- factor(test$season, labels = c("Spring", "Summer", "Fall", "Winter"))
+test$season  <- factor(test$season, labels = c("Winter", "Spring", "Summer", "Fall"))
 test$weather <- factor(test$weather, labels = c("Good", "Normal", "Bad", "Very Bad"))
 test$hour    <- factor(hour(ymd_hms(test$datetime)))
 test$times   <- as.POSIXct(strftime(ymd_hms(test$datetime), format="%H:%M:%S"), format="%H:%M:%S")
@@ -25,7 +25,8 @@ test$Weekday <- wday(ymd_hms(test$datetime), label=TRUE)
 
 
 season_summary <- ddply(train,.(season,hour),summarise, count = mean(count))
-ggplot(train, aes(x = hour, y = count, colour = season)) +
+pdf(file = 'ANAND_GREESHAM_SEASON.pdf', height = 7, width = 10)
+plot1 <- ggplot(train, aes(x = hour, y = count, colour = season)) +
   geom_point(data = season_summary, aes(group = season)) +
   geom_line(data = season_summary, aes(group = season)) +
   scale_x_discrete("Hour") +
@@ -33,6 +34,9 @@ ggplot(train, aes(x = hour, y = count, colour = season)) +
   theme_minimal() +
   ggtitle("LEAST RENTING IN WINTER, MOST IN SUMMER\n") + 
   theme(plot.title=element_text(size=14))
+print(plot1)
+dev.off()
+
 
 weather_summary <- ddply(train,.(weather,hour),
                          summarise, count = mean(count))
